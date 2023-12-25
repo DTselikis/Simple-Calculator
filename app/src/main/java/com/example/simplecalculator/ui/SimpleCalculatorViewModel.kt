@@ -6,12 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.simplecalculator.CalculatorAction
 import com.example.simplecalculator.domain.use_case.ExpressionCalculator
+import com.example.simplecalculator.domain.use_case.ExpressionSanitization
+import com.example.simplecalculator.utils.notEndsWithZero
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SimpleCalculatorViewModel @Inject constructor(
-    private val expressionCalculator: ExpressionCalculator
+    private val expressionCalculator: ExpressionCalculator,
+    private val expressionSanitization: ExpressionSanitization
 ): ViewModel() {
 
     var uiState by mutableStateOf(SimpleCalculatorUiState())
@@ -32,8 +35,9 @@ class SimpleCalculatorViewModel @Inject constructor(
         uiState = uiState.copy(input = result.toString())
     }
 
-    fun append(symbol: String) {
-        uiState = uiState.copy(input = uiState.input + symbol)
+    fun append(symbol: Char) {
+        val expression = expressionSanitization.sanitize(uiState.input, symbol)
+        uiState = uiState.copy(input = expression)
     }
 
     fun clear() {
@@ -41,6 +45,10 @@ class SimpleCalculatorViewModel @Inject constructor(
     }
 
     fun delete() {
-        uiState = uiState.copy(input = uiState.input.dropLast(1))
+        if (uiState.input.length > 1) {
+            uiState = uiState.copy(input = uiState.input.dropLast(1))
+        } else if (uiState.input.notEndsWithZero()) {
+            uiState = uiState.copy(input = "0")
+        }
     }
 }

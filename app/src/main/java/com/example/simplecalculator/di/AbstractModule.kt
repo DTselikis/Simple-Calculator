@@ -2,6 +2,8 @@ package com.example.simplecalculator.di
 
 import com.example.simplecalculator.domain.use_case.CalculateExpressionUseCase
 import com.example.simplecalculator.domain.use_case.ExpressionCalculator
+import com.example.simplecalculator.domain.use_case.ExpressionSanitization
+import com.example.simplecalculator.domain.use_case.SanitizeExpressionUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +18,10 @@ abstract class AbstractModule {
     abstract fun bindExpressionCalculator(
         calculateExpressionUseCase: CalculateExpressionUseCase
     ): ExpressionCalculator
+
+    @Binds
+    @Singleton
+    abstract fun bindExpressionAppender(
+        sanitizeExpressionUseCase: SanitizeExpressionUseCase
+    ): ExpressionSanitization
 }

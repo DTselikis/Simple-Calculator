@@ -1,5 +1,8 @@
 package com.example.simplecalculator.domain.use_case
 
+import com.example.simplecalculator.consts.ADDITION_SYMBOL
+import com.example.simplecalculator.consts.MULTIPLICATION_SYMBOL
+import com.example.simplecalculator.consts.SUBTRACTION_SYMBOL
 import com.example.simplecalculator.utils.hasPrecedence
 import com.example.simplecalculator.utils.isDot
 import java.util.Stack
@@ -33,9 +36,9 @@ class CalculateExpressionUseCase @Inject constructor(): ExpressionCalculator {
 
     private fun applyOperation(operator: Char, b: Double, a: Double) =
         when (operator) {
-            ADDITION_CHAR -> a + b
-            SUBTRACTION_CHAR -> a - b
-            MULTIPLICATION_CHAR -> a * b
+            ADDITION_SYMBOL -> a + b
+            SUBTRACTION_SYMBOL -> a - b
+            MULTIPLICATION_SYMBOL -> a * b
             else -> {
                 if (b == 0.0) {
                     throw ArithmeticException("Cannot divide by zero")
@@ -45,10 +48,6 @@ class CalculateExpressionUseCase @Inject constructor(): ExpressionCalculator {
         }
 
     companion object {
-        const val ADDITION_CHAR = '+'
-        const val SUBTRACTION_CHAR = '-'
-        const val MULTIPLICATION_CHAR = 'X'
-        const val DIVISION_CHAR = '/'
         const val OPERATIONS_REGEX = "(?=[+\\-X/])|(?<=[+\\-X/])"
     }
 }
