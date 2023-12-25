@@ -52,6 +52,19 @@ fun Calculator(
 ) {
     val uiState = viewModel.uiState
 
+    CalculatorContent(
+        uiState = uiState,
+        onClick = viewModel::onEvent,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun CalculatorContent(
+    uiState: SimpleCalculatorUiState,
+    modifier: Modifier = Modifier,
+    onClick: (CalculatorAction) -> Unit
+) {
     Column(
         modifier = modifier
     ) {
@@ -69,7 +82,7 @@ fun Calculator(
             ButtonsRow(
                 buttons = buttonsList,
                 buttonSpacing = 12.dp,
-                onClick = viewModel::onEvent
+                onClick = onClick
             )
         }
     }
@@ -77,10 +90,13 @@ fun Calculator(
 
 @Preview(showSystemUi = true)
 @Composable
-fun CalculatorPreview() {
+fun CalculatorContentPreview() {
     SimpleCalculatorTheme {
         Surface {
-            Calculator()
+            CalculatorContent(
+                uiState = SimpleCalculatorUiState(),
+                onClick = { }
+            )
         }
     }
 }
