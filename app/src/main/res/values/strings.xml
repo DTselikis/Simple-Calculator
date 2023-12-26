@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Simple Calculator</string>
+    <string name="result">= $s</string>
+    <string name="connectivity_error">A connectivity error occurred</string>
 </resources>

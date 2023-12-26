@@ -1,5 +1,7 @@
 package com.example.simplecalculator.di
 
+import com.example.simplecalculator.data.remote.repository.BeaconRepository
+import com.example.simplecalculator.domain.repository.CurrenciesRepository
 import com.example.simplecalculator.domain.use_case.CalculateExpressionUseCase
 import com.example.simplecalculator.domain.use_case.ExpressionCalculator
 import com.example.simplecalculator.domain.use_case.ExpressionSanitization
@@ -24,4 +26,10 @@ abstract class AbstractModule {
     abstract fun bindExpressionAppender(
         sanitizeExpressionUseCase: SanitizeExpressionUseCase
     ): ExpressionSanitization
+
+    @Binds
+    @Singleton
+    abstract fun bindCurrenciesRepository(
+        beaconRepository: BeaconRepository
+    ): CurrenciesRepository
 }

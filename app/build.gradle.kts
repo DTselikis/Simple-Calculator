@@ -1,8 +1,16 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    kotlin("plugin.serialization") version "1.9.21"
+}
+
+val beaconApiProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("beaconApi.properties")))
 }
 
 android {
@@ -29,6 +37,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "API_KEY", beaconApiProperties.getProperty("api_key"))
+        }
+        debug {
+            buildConfigField("String", "API_KEY", beaconApiProperties.getProperty("api_key"))
         }
     }
     compileOptions {
@@ -40,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -84,4 +97,10 @@ dependencies {
     // For local unit tests
     testImplementation("com.google.dagger:hilt-android-testing:2.50")
     kaptTest("com.google.dagger:hilt-compiler:2.50")
+
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 }
