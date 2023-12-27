@@ -8,10 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simplecalculator.CalculatorAction
+import com.example.simplecalculator.R
+import com.example.simplecalculator.domain.model.CurrencyInfo
 import com.example.simplecalculator.ui.theme.SimpleCalculatorTheme
 
 val buttons = listOf(
@@ -68,15 +71,27 @@ fun CalculatorContent(
     Column(
         modifier = modifier
     ) {
+        CurrencyConverter(
+            currencyConverterUiState = uiState.currencyConverterUiState,
+            onCurrencyChange = onClick,
+            onExpandedChange = onClick,
+            modifier = Modifier
+                .weight(0.5F)
+                .fillMaxWidth()
+        )
         Box(modifier = Modifier
             .weight(1F)
             .fillMaxWidth()
         ) {
-            Text(
-                text = uiState.input,
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-            )
+            ) {
+                Text(text = uiState.input)
+                if (uiState.result.isNotEmpty()) {
+                    Text(text = stringResource(id = R.string.result, uiState.result))
+                }
+            }
         }
         buttons.forEach { buttonsList ->
             ButtonsRow(
@@ -93,8 +108,37 @@ fun CalculatorContent(
 fun CalculatorContentPreview() {
     SimpleCalculatorTheme {
         Surface {
+            val currencies = listOf(
+                CurrencyInfo(
+                    id = 46,
+                    name = "Euro",
+                    shortCode = "EUR",
+                    symbol = "€"
+                ),
+                CurrencyInfo(
+                    id = 8,
+                    name = "Australian Dollar",
+                    shortCode = "AUD",
+                    symbol = "\$"
+                ),
+                CurrencyInfo(
+                    id = 8,
+                    name = "US Dollar",
+                    shortCode = "USD",
+                    symbol = "\$"
+                )
+            )
             CalculatorContent(
-                uiState = SimpleCalculatorUiState(),
+                uiState = SimpleCalculatorUiState(
+                    input = "2+2",
+                    result = "4",
+                    currencyConverterUiState = CurrencyConverterUiState(
+                        availableCurrencies = currencies,
+                        selectedCurrencyId = 46,
+                        convertedResult = "22",
+                        expanded = false
+                    )
+                ),
                 onClick = { }
             )
         }
