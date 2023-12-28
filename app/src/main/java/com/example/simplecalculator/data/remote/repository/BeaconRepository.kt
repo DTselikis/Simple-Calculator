@@ -14,13 +14,19 @@ class BeaconRepository(
 ) : CurrenciesRepository {
     override suspend fun getAvailableCurrencies(): Resource<List<CurrencyInfo>> =
         try {
-            api.getAvailableCurrencies().body()!!.response
-                .map { currencyInfoDto ->
-                    currencyInfoDto.toCurrencyInfo()
+            api.getAvailableCurrencies().let { response ->
+                if (response.isSuccessful) {
+                    response.body()!!.response
+                        .map { currencyInfoDto ->
+                            currencyInfoDto.toCurrencyInfo()
+                        }
+                        .let { currencyInfos ->
+                            Resource.Success(currencyInfos)
+                        }
+                } else {
+                    Resource.Error(R.string.connectivity_error)
                 }
-                .let {
-                    Resource.Success(it)
-                }
+            }
         } catch (e: Exception) {
             Resource.Error(R.string.connectivity_error)
         }
@@ -35,8 +41,12 @@ class BeaconRepository(
                 from = from,
                 to = to,
                 amount = amount
-            ).body()!!.toCurrency().let{
-                Resource.Success(it)
+            ).let { response ->
+                if (response.isSuccessful) {
+                    Resource.Success(response.body()!!.toCurrency())
+                } else {
+                    Resource.Error(R.string.connectivity_error)
+                }
             }
         } catch (e: Exception) {
             Resource.Error(R.string.connectivity_error)

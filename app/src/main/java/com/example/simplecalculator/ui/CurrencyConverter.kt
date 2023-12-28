@@ -24,22 +24,20 @@ fun CurrencyConverter(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        currencyConverterUiState.selectedCurrencyId?.let {
-            Box {
-                CurrenciesMenu(
-                    currencies = currencyConverterUiState.availableCurrencies,
-                    selectedCurrencyId = currencyConverterUiState.selectedCurrencyId,
-                    expanded = currencyConverterUiState.expanded,
-                    onExpandedChange = { expanded ->
-                        onExpandedChange(CalculatorAction.ExpandedChanged(expanded))
-                    },
-                    onCurrencyChange = { shortCode ->
-                        onCurrencyChange(CalculatorAction.CurrencyChanged(shortCode))
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                )
-            }
+        Box {
+            CurrenciesMenu(
+                currencies = currencyConverterUiState.availableCurrencies,
+                selectedCurrency = currencyConverterUiState.selectedCurrency,
+                expanded = currencyConverterUiState.expanded,
+                onExpandedChange = { expanded ->
+                    onExpandedChange(CalculatorAction.ExpandedChanged(expanded))
+                },
+                onCurrencyChange = { id ->
+                    onCurrencyChange(CalculatorAction.CurrencyChanged(id))
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+            )
         }
         Box {
             Text(
@@ -78,7 +76,7 @@ fun CurrencyConverterPreview() {
             )
             val currencyConverterUiState = CurrencyConverterUiState(
                 availableCurrencies = currencies,
-                selectedCurrencyId = 46,
+                selectedCurrency = currencies[0],
                 convertedResult = "22",
                 expanded = false
             )

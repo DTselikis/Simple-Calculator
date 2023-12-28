@@ -19,10 +19,10 @@ import com.example.simplecalculator.ui.theme.SimpleCalculatorTheme
 @Composable
 fun CurrenciesMenu(
     currencies: List<CurrencyInfo>,
-    selectedCurrencyId: Int,
+    selectedCurrency: CurrencyInfo?,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    onCurrencyChange: (String) -> Unit,
+    onCurrencyChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ExposedDropdownMenuBox(
@@ -30,13 +30,14 @@ fun CurrenciesMenu(
         onExpandedChange = onExpandedChange,
         modifier = modifier
     ) {
-        val selectedCurrency = currencies.find { it.id == selectedCurrencyId }!!
         TextField(
-            value = stringResource(
-                id = R.string.currency_name,
-                selectedCurrency.shortCode,
-                selectedCurrency.symbol
-            ),
+            value = selectedCurrency?.let { currencyInfo ->
+                stringResource(
+                    id = R.string.currency_name,
+                    currencyInfo.shortCode,
+                    currencyInfo.symbol
+                )
+            } ?: "",
             onValueChange = {},
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             readOnly = true,
@@ -60,7 +61,7 @@ fun CurrenciesMenu(
                         )
                     },
                     onClick = {
-                        onCurrencyChange(currencyInfo.shortCode)
+                        onCurrencyChange(currencyInfo.id)
                         onExpandedChange(false)
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -97,7 +98,7 @@ fun CurrenciesMenuPreview() {
             )
             CurrenciesMenu(
                 currencies = currencies,
-                selectedCurrencyId = 46,
+                selectedCurrency = currencies[0],
                 expanded = false,
                 onExpandedChange = {},
                 onCurrencyChange = {}

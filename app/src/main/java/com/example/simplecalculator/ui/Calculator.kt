@@ -134,7 +134,7 @@ fun CalculatorContentPreview() {
                     result = "4",
                     currencyConverterUiState = CurrencyConverterUiState(
                         availableCurrencies = currencies,
-                        selectedCurrencyId = 46,
+                        selectedCurrency = currencies[0],
                         convertedResult = "22",
                         expanded = false
                     )

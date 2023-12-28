@@ -3,4 +3,5 @@
     <string name="result">= %s</string>
     <string name="connectivity_error">A connectivity error occurred</string>
     <string name="currency_name">%s %s</string>
+    <string name="available_currencies_fetch_failed">Could\'t fetch the available currencies.</string>
 </resources>
