@@ -6,28 +6,29 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simplecalculator.CalculatorAction
-import com.example.simplecalculator.R
 import com.example.simplecalculator.consts.EUR0_SHORT_CODE
+import com.example.simplecalculator.di.IoDispatcher
 import com.example.simplecalculator.domain.use_case.ConvertToCurrencyUseCase
 import com.example.simplecalculator.domain.use_case.ExpressionCalculator
 import com.example.simplecalculator.domain.use_case.ExpressionSanitization
 import com.example.simplecalculator.domain.use_case.GetAvailableCurrenciesUseCase
+import com.example.simplecalculator.helper.ErrorResolver
 import com.example.simplecalculator.helper.Resource
 import com.example.simplecalculator.utils.endsWithDigit
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class SimpleCalculatorViewModel @Inject constructor(
     private val expressionCalculator: ExpressionCalculator,
     private val expressionSanitization: ExpressionSanitization,
     private val getAvailableCurrenciesUseCase: GetAvailableCurrenciesUseCase,
-    private val convertToCurrencyUseCase: ConvertToCurrencyUseCase
+    private val convertToCurrencyUseCase: ConvertToCurrencyUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineContext
 ) : ViewModel() {
 
 
@@ -38,31 +39,33 @@ class SimpleCalculatorViewModel @Inject constructor(
 
     init {
         uiState = SimpleCalculatorUiState()
+        fetchAvailableCurrencies()
+    }
+
+    private fun fetchAvailableCurrencies() {
         viewModelScope.launch {
             var tries = 10
 
             while (tries > 0 && uiState.currencyConverterUiState.availableCurrencies.isEmpty()) {
-                withContext(Dispatchers.IO) {
-                    getAvailableCurrenciesUseCase.getAvailableCurrencies().let { result ->
-                        if (result is Resource.Success) {
-                            uiState = uiState.copy(
-                                currencyConverterUiState = uiState.currencyConverterUiState.copy(
-                                    availableCurrencies = result.data!!,
-                                    selectedCurrency = result.data.find {
-                                        it.shortCode == EUR0_SHORT_CODE
-                                    }
-                                )
+                getAvailableCurrenciesUseCase.getAvailableCurrencies().let { result ->
+                    if (result is Resource.Success) {
+                        uiState = uiState.copy(
+                            currencyConverterUiState = uiState.currencyConverterUiState.copy(
+                                availableCurrencies = result.data!!,
+                                selectedCurrency = result.data.find {
+                                    it.shortCode == EUR0_SHORT_CODE
+                                }
                             )
-                        } else {
-                            delay(5000L)
-                            tries -= 1
-                        }
+                        )
+                    } else {
+                        delay(5000L)
+                        tries -= 1
                     }
                 }
             }
 
             if (uiState.currencyConverterUiState.availableCurrencies.isEmpty()) {
-                uiState = uiState.copy(errorMessage = R.string.available_currencies_fetch_failed)
+                uiState = uiState.copy(errorMessage = ErrorResolver.errorCodeToMessage[ErrorResolver.CURRENCIES_NOT_FETCHED])
             }
         }
     }
@@ -78,7 +81,7 @@ class SimpleCalculatorViewModel @Inject constructor(
         }
     }
 
-    fun calculate(eraseInput: Boolean = false) {
+    private fun calculate(eraseInput: Boolean = false) {
         val result = expressionCalculator.calculate(uiState.input)
 
         uiState.currencyConverterUiState.selectedCurrency?.let { currencyInfo ->
@@ -91,7 +94,7 @@ class SimpleCalculatorViewModel @Inject constructor(
         )
     }
 
-    fun append(symbol: Char) {
+    private fun append(symbol: Char) {
         val expression = expressionSanitization.sanitize(uiState.input, symbol)
         uiState = uiState.copy(input = expression)
 
@@ -100,13 +103,13 @@ class SimpleCalculatorViewModel @Inject constructor(
         }
     }
 
-    fun clear() {
+    private fun clear() {
         uiState = SimpleCalculatorUiState(
             currencyConverterUiState = uiState.currencyConverterUiState.copy(convertedResult = "")
         )
     }
 
-    fun delete() {
+    private fun delete() {
         if (uiState.input.length > 1) {
             uiState = uiState.copy(input = uiState.input.dropLast(1))
 
@@ -118,26 +121,29 @@ class SimpleCalculatorViewModel @Inject constructor(
         }
     }
 
-    fun convertToCurrency(id: Int) {
+    private fun convertToCurrency(id: Int) {
         convertToCurrencyJob?.cancel()
-        uiState.currencyConverterUiState.availableCurrencies.find { it.id == id }?.let { currencyInfo ->
-            convertToCurrencyJob = viewModelScope.launch(Dispatchers.IO) {
-                val result = convertToCurrencyUseCase.convertToCurrency(
-                    from = EUR0_SHORT_CODE,
-                    to = currencyInfo.shortCode,
-                    amount = uiState.result
-                )
-                uiState = uiState.copy(
-                    currencyConverterUiState = uiState.currencyConverterUiState.copy(
-                        convertedResult = result.data!!.value.toString(),
-                        selectedCurrency = currencyInfo
+        uiState.currencyConverterUiState.availableCurrencies.find { it.id == id }
+            ?.let { currencyInfo ->
+                convertToCurrencyJob = viewModelScope.launch(ioDispatcher) {
+                    val result = convertToCurrencyUseCase.convertToCurrency(
+                        from = EUR0_SHORT_CODE,
+                        to = currencyInfo.shortCode,
+                        amount = uiState.result
                     )
-                )
+
+                    uiState = uiState.copy(
+                        currencyConverterUiState = uiState.currencyConverterUiState.copy(
+                            convertedResult = result.data?.value?.toString() ?: "",
+                            selectedCurrency = currencyInfo
+                        ),
+                        errorMessage = ErrorResolver.errorCodeToMessage[result.message]
+                    )
+                }
             }
-        }
     }
 
-    fun changeExpandState(expanded: Boolean) {
+    private fun changeExpandState(expanded: Boolean) {
         uiState = uiState.copy(
             currencyConverterUiState = uiState.currencyConverterUiState.copy(expanded = expanded)
         )

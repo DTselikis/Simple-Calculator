@@ -2,15 +2,14 @@ package com.example.simplecalculator.domain.use_case
 
 import com.example.simplecalculator.utils.endsWithOperationSymbolOrDecimalPoint
 import com.example.simplecalculator.utils.endsWithZero
-import com.example.simplecalculator.utils.isDot
+import com.example.simplecalculator.utils.isDecimalPoint
 import com.example.simplecalculator.utils.lastNumberContainsDecimalPoint
-import javax.inject.Inject
 
-class SanitizeExpressionUseCase @Inject constructor() : ExpressionSanitization {
+class SanitizeExpressionUseCase : ExpressionSanitization {
     override fun sanitize(expression: String, input: Char): String =
         if (input.isDigit()) {
             handleDigit(expression, input)
-        } else if (input.isDot()) {
+        } else if (input.isDecimalPoint()) {
             handleDecimalPoint(expression, input)
         } else {
             handleOperationSymbol(expression, input)

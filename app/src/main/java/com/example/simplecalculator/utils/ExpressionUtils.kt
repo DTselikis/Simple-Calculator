@@ -1,6 +1,5 @@
 package com.example.simplecalculator.utils
 
-import androidx.core.text.isDigitsOnly
 import com.example.simplecalculator.consts.ADDITION_SYMBOL
 import com.example.simplecalculator.consts.DECIMAL_POINT
 import com.example.simplecalculator.consts.DIVISION_SYMBOL
@@ -24,9 +23,9 @@ fun String.notEndsWithZero() =
     this.endsWithZero().not()
 
 fun String.endsWithDigit() =
-    this.takeLast(1).isDigitsOnly()
+    this.takeLast(1)[0].isDigit()
 
-fun List<String>.replaceEmptyWithZero() =
+fun List<String>.replaceLastEmptyWithZero() =
     this.map { token ->
         token.ifEmpty { "0" }
     }

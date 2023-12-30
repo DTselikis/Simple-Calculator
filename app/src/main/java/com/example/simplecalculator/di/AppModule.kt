@@ -3,8 +3,10 @@ package com.example.simplecalculator.di
 import com.example.simplecalculator.data.remote.api.BeaconApi
 import com.example.simplecalculator.data.remote.repository.BeaconRepository
 import com.example.simplecalculator.domain.repository.CurrenciesRepository
+import com.example.simplecalculator.domain.use_case.CalculateExpressionUseCase
 import com.example.simplecalculator.domain.use_case.ConvertToCurrencyUseCase
 import com.example.simplecalculator.domain.use_case.GetAvailableCurrenciesUseCase
+import com.example.simplecalculator.domain.use_case.SanitizeExpressionUseCase
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -15,6 +17,7 @@ import okhttp3.MediaType
 import retrofit2.Converter
 import retrofit2.Retrofit
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -43,8 +46,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBeaconRepository(api: BeaconApi): BeaconRepository =
-        BeaconRepository(api)
+    fun provideBeaconRepository(api: BeaconApi, @IoDispatcher ioDispatcher: CoroutineContext): BeaconRepository =
+        BeaconRepository(api, ioDispatcher)
 
     @Provides
     @Singleton
@@ -55,4 +58,14 @@ object AppModule {
     @Singleton
     fun provideConvertToCurrencyUseCase(currenciesRepository: CurrenciesRepository): ConvertToCurrencyUseCase =
         ConvertToCurrencyUseCase(currenciesRepository)
+
+    @Provides
+    @Singleton
+    fun provideSanitizeExpressionUseCase(): SanitizeExpressionUseCase =
+        SanitizeExpressionUseCase()
+
+    @Provides
+    @Singleton
+    fun provideCalculateExpressionUseCase(): CalculateExpressionUseCase =
+        CalculateExpressionUseCase()
 }
