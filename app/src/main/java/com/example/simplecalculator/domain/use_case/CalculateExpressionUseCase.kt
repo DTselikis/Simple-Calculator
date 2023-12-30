@@ -4,18 +4,18 @@ import com.example.simplecalculator.consts.ADDITION_SYMBOL
 import com.example.simplecalculator.consts.MULTIPLICATION_SYMBOL
 import com.example.simplecalculator.consts.SUBTRACTION_SYMBOL
 import com.example.simplecalculator.utils.hasPrecedence
-import com.example.simplecalculator.utils.isDot
+import com.example.simplecalculator.utils.isDecimalPoint
+import com.example.simplecalculator.utils.replaceEmptyWithZero
 import java.util.Stack
-import javax.inject.Inject
 
-class CalculateExpressionUseCase @Inject constructor(): ExpressionCalculator {
+class CalculateExpressionUseCase : ExpressionCalculator {
     override fun calculate(expression: String): Double {
-        val tokens = expression.split(OPERATIONS_REGEX.toRegex())
+        val tokens = expression.split(OPERATIONS_REGEX.toRegex()).replaceEmptyWithZero()
         val values = Stack<Double>()
         val operators = Stack<Char>()
 
         tokens.forEach { token ->
-            if (token.all { it.isDigit() || it.isDot() }) {
+            if (token.all { it.isDigit() || it.isDecimalPoint() }) {
                 // If the token is a number, push it to the values stack
                 values.push(token.toDouble())
             } else {

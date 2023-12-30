@@ -26,4 +26,9 @@ fun String.notEndsWithZero() =
 fun String.endsWithDigit() =
     this.takeLast(1).isDigitsOnly()
 
+fun List<String>.replaceEmptyWithZero() =
+    this.map { token ->
+        token.ifEmpty { "0" }
+    }
+
 const val NUMBER_WITH_DOT_REGEX = "\\.\\d+$"
