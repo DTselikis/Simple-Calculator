@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.simplecalculator.R
+import com.example.simplecalculator.data.local.LocalCurrenciesDataSource
 import com.example.simplecalculator.domain.model.CurrencyInfo
 import com.example.simplecalculator.ui.theme.SimpleCalculatorTheme
 
@@ -76,26 +77,7 @@ fun CurrenciesMenu(
 fun CurrenciesMenuPreview() {
     SimpleCalculatorTheme {
         Surface {
-            val currencies = listOf(
-                CurrencyInfo(
-                    id = 46,
-                    name = "Euro",
-                    shortCode = "EUR",
-                    symbol = "€"
-                ),
-                CurrencyInfo(
-                    id = 8,
-                    name = "Australian Dollar",
-                    shortCode = "AUD",
-                    symbol = "\$"
-                ),
-                CurrencyInfo(
-                    id = 8,
-                    name = "US Dollar",
-                    shortCode = "USD",
-                    symbol = "\$"
-                )
-            )
+            val currencies = LocalCurrenciesDataSource.availableCurrencies
             CurrenciesMenu(
                 currencies = currencies,
                 selectedCurrency = currencies[0],

@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.simplecalculator.CalculatorAction
-import com.example.simplecalculator.domain.model.CurrencyInfo
+import com.example.simplecalculator.data.local.LocalCurrenciesDataSource
 import com.example.simplecalculator.ui.theme.SimpleCalculatorTheme
 
 @Composable
@@ -54,26 +54,7 @@ fun CurrencyConverter(
 fun CurrencyConverterPreview() {
     SimpleCalculatorTheme {
         Surface {
-            val currencies = listOf(
-                CurrencyInfo(
-                    id = 46,
-                    name = "Euro",
-                    shortCode = "EUR",
-                    symbol = "€"
-                ),
-                CurrencyInfo(
-                    id = 8,
-                    name = "Australian Dollar",
-                    shortCode = "AUD",
-                    symbol = "\$"
-                ),
-                CurrencyInfo(
-                    id = 8,
-                    name = "US Dollar",
-                    shortCode = "USD",
-                    symbol = "\$"
-                )
-            )
+            val currencies = LocalCurrenciesDataSource.availableCurrencies
             val currencyConverterUiState = CurrencyConverterUiState(
                 availableCurrencies = currencies,
                 selectedCurrency = currencies[0],
