@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ fun CurrencyConverter(
                 currencies = currencyConverterUiState.availableCurrencies,
                 selectedCurrency = currencyConverterUiState.selectedCurrency,
                 expanded = currencyConverterUiState.expanded,
+                convertedResult = currencyConverterUiState.convertedResult,
                 onExpandedChange = { expanded ->
                     onExpandedChange(CalculatorAction.ExpandedChanged(expanded))
                 },
@@ -37,13 +37,6 @@ fun CurrencyConverter(
                 },
                 modifier = Modifier
                     .align(Alignment.TopStart)
-            )
-        }
-        Box {
-            Text(
-                text = currencyConverterUiState.convertedResult,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
             )
         }
     }

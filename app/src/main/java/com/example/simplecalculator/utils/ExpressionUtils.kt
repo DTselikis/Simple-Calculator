@@ -4,6 +4,7 @@ import com.example.simplecalculator.consts.ADDITION_SYMBOL
 import com.example.simplecalculator.consts.DECIMAL_POINT
 import com.example.simplecalculator.consts.DIVISION_SYMBOL
 import com.example.simplecalculator.consts.MULTIPLICATION_SYMBOL
+import com.example.simplecalculator.consts.RESULT_SYMBOL
 import com.example.simplecalculator.consts.SUBTRACTION_SYMBOL
 
 fun String.lastNumberContainsDecimalPoint() =
@@ -13,7 +14,7 @@ fun String.endsWithOperationSymbolOrDecimalPoint() =
     this.takeLast(1)[0].let {
         it == ADDITION_SYMBOL || it == SUBTRACTION_SYMBOL ||
                 it == MULTIPLICATION_SYMBOL || it == DIVISION_SYMBOL ||
-                it == DECIMAL_POINT
+                it == DECIMAL_POINT || it == RESULT_SYMBOL
     }
 
 fun String.endsWithZero() =

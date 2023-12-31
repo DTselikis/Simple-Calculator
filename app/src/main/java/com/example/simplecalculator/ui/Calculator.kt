@@ -3,7 +3,9 @@ package com.example.simplecalculator.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,42 +70,46 @@ fun CalculatorContent(
     modifier: Modifier = Modifier,
     onClick: (CalculatorAction) -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        CurrencyConverter(
-            currencyConverterUiState = uiState.currencyConverterUiState,
-            onCurrencyChange = onClick,
-            onExpandedChange = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Box(modifier = Modifier
-            .weight(2F)
-            .fillMaxWidth()
+    Scaffold { paddingValues ->
+        Column(
+            modifier = modifier
+                .padding(paddingValues)
         ) {
-            Column(
+            CurrencyConverter(
+                currencyConverterUiState = uiState.currencyConverterUiState,
+                onCurrencyChange = onClick,
+                onExpandedChange = onClick,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .fillMaxWidth()
+            )
+            Box(modifier = Modifier
+                .weight(2F)
+                .fillMaxWidth()
             ) {
-                Text(
-                    text = uiState.input,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (uiState.result.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                ) {
                     Text(
-                        text = stringResource(id = R.string.result, uiState.result),
-                        style = MaterialTheme.typography.titleLarge
+                        text = uiState.input,
+                        style = MaterialTheme.typography.titleMedium
                     )
+                    if (uiState.result.isNotEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.result, uiState.result),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                 }
             }
+            buttons.forEach { buttonsList ->
+                ButtonsRow(
+                    buttons = buttonsList,
+                    onClick = onClick
+                )
+            }
         }
-        buttons.forEach { buttonsList ->
-            ButtonsRow(
-                buttons = buttonsList,
-                onClick = onClick
-            )
-        }
+
     }
 }
 
