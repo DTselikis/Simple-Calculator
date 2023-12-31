@@ -296,6 +296,29 @@ class SimpleCalculatorViewModelTest {
         Assert.assertTrue(viewModel.uiState.currencyConverterUiState.expanded)
     }
 
+    @Test
+    fun `clear error message`() = runTest {
+        coEvery { getAvailableCurrenciesUseCase.getAvailableCurrencies() } returns
+                Resource.Error(message = ErrorResolver.CURRENCIES_NOT_FETCHED)
+
+        viewModel = SimpleCalculatorViewModel(
+            calculateExpressionUseCase,
+            sanitizeExpressionUseCase,
+            getAvailableCurrenciesUseCase,
+            convertToCurrencyUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        advanceUntilIdle()
+
+        Assert.assertEquals(
+            ErrorResolver.errorCodeToMessage[ErrorResolver.CURRENCIES_NOT_FETCHED],
+            viewModel.uiState.errorMessage
+        )
+        
+        viewModel.onEvent(CalculatorAction.ClearError)
+        Assert.assertNull(viewModel.uiState.errorMessage)
+    }
+
     private fun mockConvertToCurrency(amount: String) {
         coEvery { convertToCurrencyUseCase.convertToCurrency(any(), any(), amount) } returns
                 Resource.Success(data = Currency(amount.toDouble()))

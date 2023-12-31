@@ -78,6 +78,7 @@ class SimpleCalculatorViewModel @Inject constructor(
             is CalculatorAction.Append -> append(event.symbol)
             is CalculatorAction.CurrencyChanged -> convertToCurrency(event.id)
             is CalculatorAction.ExpandedChanged -> changeExpandState(event.expanded)
+            CalculatorAction.ClearError -> clearErrorMessage()
         }
     }
 
@@ -146,6 +147,12 @@ class SimpleCalculatorViewModel @Inject constructor(
     private fun changeExpandState(expanded: Boolean) {
         uiState = uiState.copy(
             currencyConverterUiState = uiState.currencyConverterUiState.copy(expanded = expanded)
+        )
+    }
+
+    private fun clearErrorMessage() {
+        uiState = uiState.copy(
+            errorMessage = null
         )
     }
 }
