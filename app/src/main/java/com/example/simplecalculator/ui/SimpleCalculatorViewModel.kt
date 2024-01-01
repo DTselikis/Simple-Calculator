@@ -6,7 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simplecalculator.CalculatorAction
-import com.example.simplecalculator.consts.EUR0_SHORT_CODE
+import com.example.simplecalculator.consts.EURO_SHORT_CODE
+import com.example.simplecalculator.consts.USD_SHORT_CODE
 import com.example.simplecalculator.di.IoDispatcher
 import com.example.simplecalculator.domain.use_case.ConvertToCurrencyUseCase
 import com.example.simplecalculator.domain.use_case.ExpressionCalculator
@@ -53,7 +54,7 @@ class SimpleCalculatorViewModel @Inject constructor(
                             currencyConverterUiState = uiState.currencyConverterUiState.copy(
                                 availableCurrencies = result.data!!,
                                 selectedCurrency = result.data.find {
-                                    it.shortCode == EUR0_SHORT_CODE
+                                    it.shortCode == USD_SHORT_CODE
                                 }
                             )
                         )
@@ -128,7 +129,7 @@ class SimpleCalculatorViewModel @Inject constructor(
             ?.let { currencyInfo ->
                 convertToCurrencyJob = viewModelScope.launch(ioDispatcher) {
                     val result = convertToCurrencyUseCase.convertToCurrency(
-                        from = EUR0_SHORT_CODE,
+                        from = EURO_SHORT_CODE,
                         to = currencyInfo.shortCode,
                         amount = uiState.result
                     )

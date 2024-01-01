@@ -1,3 +1,4 @@
 package com.example.simplecalculator.consts
 
-const val EUR0_SHORT_CODE = "EUR"
+const val EURO_SHORT_CODE = "EUR"
+const val USD_SHORT_CODE = "USD"

@@ -1,6 +1,6 @@
 package com.example.simplecalculator.data.remote.repository
 
-import com.example.simplecalculator.consts.EUR0_SHORT_CODE
+import com.example.simplecalculator.consts.EURO_SHORT_CODE
 import com.example.simplecalculator.data.local.LocalCurrenciesDataSource
 import com.example.simplecalculator.data.remote.repository.api.FakeApi
 import com.example.simplecalculator.helper.ErrorResolver
@@ -53,7 +53,7 @@ class BeaconRepositoryTest {
             StandardTestDispatcher(testScheduler)
         )
         val response = beaconRepository.convertToCurrency(
-            from = EUR0_SHORT_CODE,
+            from = EURO_SHORT_CODE,
             to = "AUD",
             amount = 5.0
         )
@@ -71,7 +71,7 @@ class BeaconRepositoryTest {
             StandardTestDispatcher(testScheduler)
         )
         val response = beaconRepository.convertToCurrency(
-            from = EUR0_SHORT_CODE,
+            from = EURO_SHORT_CODE,
             to = "AUD",
             amount = 5.0
         )
