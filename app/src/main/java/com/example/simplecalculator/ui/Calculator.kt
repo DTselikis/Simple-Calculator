@@ -1,5 +1,6 @@
 package com.example.simplecalculator.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -111,6 +112,7 @@ suspend fun SnackbarHostState.showErrorSnackBar(
 }
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Preview(showSystemUi = true)
 @Composable
 fun CalculatorContentPreview() {
