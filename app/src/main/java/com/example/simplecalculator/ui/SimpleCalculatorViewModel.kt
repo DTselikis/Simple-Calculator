@@ -136,7 +136,7 @@ class SimpleCalculatorViewModel @Inject constructor(
 
                     uiState = uiState.copy(
                         currencyConverterUiState = uiState.currencyConverterUiState.copy(
-                            convertedResult = result.data?.value?.toString() ?: "",
+                            convertedResult = result.data?.value?.toString()?.take(8) ?: "",
                             selectedCurrency = currencyInfo
                         ),
                         errorMessage = ErrorResolver.errorCodeToMessage[result.message]
