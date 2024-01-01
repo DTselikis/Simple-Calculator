@@ -211,7 +211,7 @@ class SimpleCalculatorViewModelTest {
 
         verify { convertToCurrencyUseCase wasNot Called }
         Assert.assertEquals(
-            LocalCurrenciesDataSource.availableCurrencies[0],
+            LocalCurrenciesDataSource.availableCurrencies[2],
             viewModel.uiState.currencyConverterUiState.selectedCurrency
         )
         Assert.assertEquals("", viewModel.uiState.currencyConverterUiState.convertedResult)
