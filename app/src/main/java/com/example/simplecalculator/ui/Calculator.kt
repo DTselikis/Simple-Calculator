@@ -1,68 +1,41 @@
 package com.example.simplecalculator.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simplecalculator.CalculatorAction
-import com.example.simplecalculator.R
 import com.example.simplecalculator.data.local.LocalCurrenciesDataSource
 import com.example.simplecalculator.ui.theme.SimpleCalculatorTheme
 
-val buttons = listOf(
-    listOf(
-        Button(symbol = "AC", action = CalculatorAction.Clear, aspectRatio = 2F, weight = 2F),
-        Button(symbol = "DEL", action = CalculatorAction.Delete),
-        Button(symbol = "/", action = CalculatorAction.Append('/'))
-    ),
-    listOf(
-        Button(symbol = "7", action = CalculatorAction.Append('7')),
-        Button(symbol = "8", action = CalculatorAction.Append('8')),
-        Button(symbol = "9", action = CalculatorAction.Append('9')),
-        Button(symbol = "X", action = CalculatorAction.Append('X'))
-    ),
-    listOf(
-        Button(symbol = "4", action = CalculatorAction.Append('4')),
-        Button(symbol = "5", action = CalculatorAction.Append('5')),
-        Button(symbol = "6", action = CalculatorAction.Append('6')),
-        Button(symbol = "-", action = CalculatorAction.Append('-'))
-    ),
-    listOf(
-        Button(symbol = "1", action = CalculatorAction.Append('1')),
-        Button(symbol = "2", action = CalculatorAction.Append('2')),
-        Button(symbol = "3", action = CalculatorAction.Append('3')),
-        Button(symbol = "+", action = CalculatorAction.Append('+'))
-    ),
-    listOf(
-        Button(symbol = "0", action = CalculatorAction.Append('0'), aspectRatio = 2F, weight = 2F),
-        Button(symbol = ".", action = CalculatorAction.Append('.')),
-        Button(symbol = "=", action = CalculatorAction.Calculate)
-    )
-)
-
 @Composable
 fun Calculator(
+    windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     viewModel: SimpleCalculatorViewModel = viewModel()
 ) {
     val uiState = viewModel.uiState
 
     CalculatorContent(
+        windowSizeClass = windowSizeClass,
         uiState = uiState,
         onClick = viewModel::onEvent,
         modifier = modifier
@@ -71,6 +44,7 @@ fun Calculator(
 
 @Composable
 fun CalculatorContent(
+    windowSizeClass: WindowSizeClass,
     uiState: SimpleCalculatorUiState,
     modifier: Modifier = Modifier,
     onClick: (CalculatorAction) -> Unit
@@ -102,34 +76,21 @@ fun CalculatorContent(
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Box(modifier = Modifier
-                .weight(2F)
-                .fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                ) {
-                    Text(
-                        text = uiState.input,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    if (uiState.result.isNotEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.result, uiState.result),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                }
-            }
-            buttons.forEach { buttonsList ->
-                ButtonsRow(
-                    buttons = buttonsList,
+            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+                CompactLayout(
+                    input = uiState.input,
+                    result = uiState.result,
+                    onClick = onClick
+                )
+            } else {
+                Spacer(modifier = Modifier.height(10.dp))
+                MediumLayout(
+                    input = uiState.input,
+                    result = uiState.result,
                     onClick = onClick
                 )
             }
         }
-
     }
 }
 
@@ -149,6 +110,7 @@ suspend fun SnackbarHostState.showErrorSnackBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Preview(showSystemUi = true)
 @Composable
 fun CalculatorContentPreview() {
@@ -156,6 +118,32 @@ fun CalculatorContentPreview() {
         Surface {
             val currencies = LocalCurrenciesDataSource.availableCurrencies
             CalculatorContent(
+                windowSizeClass = WindowSizeClass.calculateFromSize(DpSize(400.dp, 470.dp)),
+                uiState = SimpleCalculatorUiState(
+                    input = "2+2",
+                    result = "4",
+                    currencyConverterUiState = CurrencyConverterUiState(
+                        availableCurrencies = currencies,
+                        selectedCurrency = currencies[0],
+                        convertedResult = "22",
+                        expanded = false
+                    )
+                ),
+                onClick = { }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Preview(showSystemUi = true, device = "spec:parent=pixel_5,orientation=landscape")
+@Composable
+fun CalculatorContentMediumPreview() {
+    SimpleCalculatorTheme {
+        Surface {
+            val currencies = LocalCurrenciesDataSource.availableCurrencies
+            CalculatorContent(
+                windowSizeClass = WindowSizeClass.calculateFromSize(DpSize(600.dp, 500.dp)),
                 uiState = SimpleCalculatorUiState(
                     input = "2+2",
                     result = "4",

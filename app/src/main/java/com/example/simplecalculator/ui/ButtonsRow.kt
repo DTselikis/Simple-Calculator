@@ -3,7 +3,6 @@ package com.example.simplecalculator.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,7 +31,6 @@ fun ButtonsRow(
         horizontalArrangement = Arrangement.spacedBy(buttonHorizontalSpacing),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .fillMaxWidth()
             .padding(vertical = buttonVerticalSpacing)
     ) {
         buttons.forEach { button ->
@@ -61,7 +59,7 @@ fun ButtonsRowPreview() {
     SimpleCalculatorTheme {
         Surface {
             ButtonsRow(
-                buttons = buttons[1],
+                buttons = compactLayoutButtons[1],
                 buttonHorizontalSpacing = 12.dp
             ) { }
         }
